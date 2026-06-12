@@ -60,9 +60,11 @@ function createPlayer(): Player {
   };
 }
 
+const MAX_AI_SIZE = 80;
+
 function spawnFish(player: Player): Fish {
   const minS = Math.max(10, player.size * 0.3);
-  const maxS = player.size * 2.2;
+  const maxS = Math.min(MAX_AI_SIZE, player.size * 2.2);
   const s = minS + Math.random() * (maxS - minS);
   const L = Math.random() < 0.5;
   const p = fishPalette[Math.floor(Math.random() * fishPalette.length)];
