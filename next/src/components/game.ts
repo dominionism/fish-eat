@@ -198,11 +198,13 @@ function drawBackground(ctx: CanvasRenderingContext2D, seaweed: Seaweed[], now: 
 
 // ── Update helpers ──
 
-function circlesOverlap(a: { x: number; y: number; size: number }, b: { x: number; y: number; size: number }): boolean {
+function fishOverlap(a: Fish, b: Fish): boolean {
+  // Fish bodies are ellipses: rx = size*0.7, ry = size*0.35 (2:1 aspect)
+  // Scale Y by 2 to turn them into circles, then do circle collision
   const dx = a.x - b.x;
-  const dy = a.y - b.y;
+  const dy = (a.y - b.y) * 2;
   const d = Math.sqrt(dx * dx + dy * dy);
-  return d < (a.size + b.size) * 0.5;
+  return d < (a.size + b.size) * 0.7;
 }
 
 function updateAI(aiFish: Fish[], now: number) {
@@ -287,7 +289,7 @@ export function initGame(canvas: HTMLCanvasElement) {
   function checkCollisions() {
     for (let i = aiFish.length - 1; i >= 0; i--) {
       const f = aiFish[i];
-      if (!circlesOverlap(player, f)) continue;
+      if (!fishOverlap(player, f)) continue;
       if (player.size > f.size) {
         score += Math.floor(f.size * 10);
         player.grow(f.size * 0.1);
