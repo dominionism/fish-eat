@@ -122,31 +122,97 @@ function drawFishShape(
   ctx.translate(x, y);
   ctx.scale(dir, 1);
 
+  const s = size;
+  const rx = s * 0.7;
+  const ry = s * 0.35;
+
+  // ── Body ──
   ctx.beginPath();
-  ctx.ellipse(-size * 0.05, 0, size * 0.7, size * 0.35, 0, 0, Math.PI * 2);
+  ctx.ellipse(-s * 0.05, 0, rx, ry, 0, 0, Math.PI * 2);
   ctx.fillStyle = color;
   ctx.fill();
-  ctx.strokeStyle = "rgba(0,0,0,0.2)";
-  ctx.lineWidth = 0.5;
+
+  // Belly gradient — lighter towards bottom
+  const belly = ctx.createLinearGradient(0, 0, 0, ry);
+  belly.addColorStop(0, "rgba(255,255,255,0)");
+  belly.addColorStop(0.7, "rgba(255,255,255,0.25)");
+  ctx.fillStyle = belly;
+  ctx.fill();
+
+  // Dorsal gradient — darker towards top
+  const back = ctx.createLinearGradient(0, -ry, 0, 0);
+  back.addColorStop(0, "rgba(0,0,0,0.18)");
+  back.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = back;
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(0,0,0,0.15)";
+  ctx.lineWidth = Math.max(0.5, s * 0.018);
   ctx.stroke();
 
+  // ── Dorsal fin ──
   ctx.beginPath();
-  ctx.moveTo(-size * 0.7, -size * 0.3);
-  ctx.lineTo(-size * 1.05, 0);
-  ctx.lineTo(-size * 0.7, size * 0.3);
+  ctx.moveTo(-s * 0.28, -ry + 0.5);
+  ctx.quadraticCurveTo(-s * 0.10, -ry - s * 0.17, s * 0.18, -ry + 1);
+  ctx.lineTo(-s * 0.28, -ry + 0.5);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.stroke();
+
+  // ── Pectoral fin ──
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.05, ry - 1, s * 0.17, s * 0.1, -0.35, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.stroke();
+
+  // ── Forked tail ──
+  ctx.beginPath();
+  ctx.moveTo(-s * 0.62, -s * 0.14);
+  ctx.lineTo(-s * 1.08, -s * 0.28);
+  ctx.lineTo(-s * 0.90, 0);
+  ctx.lineTo(-s * 1.08, s * 0.28);
+  ctx.lineTo(-s * 0.62, s * 0.14);
   ctx.closePath();
   ctx.fillStyle = tailColor;
   ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,0.2)";
+  ctx.lineWidth = Math.max(0.5, s * 0.015);
   ctx.stroke();
 
+  // ── Gill arc ──
   ctx.beginPath();
-  ctx.arc(size * 0.35, -size * 0.08, size * 0.1, 0, Math.PI * 2);
+  ctx.arc(s * 0.18, 0, ry * 0.82, -0.75, 0.75);
+  ctx.strokeStyle = "rgba(0,0,0,0.15)";
+  ctx.lineWidth = Math.max(0.4, s * 0.012);
+  ctx.stroke();
+
+  // ── Mouth ──
+  ctx.beginPath();
+  ctx.arc(s * 0.60, -s * 0.02, s * 0.06, 0.2, Math.PI - 0.2);
+  ctx.strokeStyle = "rgba(0,0,0,0.25)";
+  ctx.lineWidth = Math.max(0.4, s * 0.012);
+  ctx.stroke();
+
+  // ── Eye (white) ──
+  ctx.beginPath();
+  ctx.arc(s * 0.38, -s * 0.10, s * 0.12, 0, Math.PI * 2);
   ctx.fillStyle = "#fff";
   ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,0.12)";
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
 
+  // ── Pupil ──
   ctx.beginPath();
-  ctx.arc(size * 0.38, -size * 0.08, size * 0.05, 0, Math.PI * 2);
+  ctx.arc(s * 0.40, -s * 0.10, s * 0.06, 0, Math.PI * 2);
   ctx.fillStyle = "#111";
+  ctx.fill();
+
+  // ── Eye highlight ──
+  ctx.beginPath();
+  ctx.arc(s * 0.42, -s * 0.13, s * 0.025, 0, Math.PI * 2);
+  ctx.fillStyle = "#fff";
   ctx.fill();
 
   ctx.restore();
