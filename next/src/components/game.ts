@@ -203,17 +203,24 @@ function circlesOverlap(a: { x: number; y: number; size: number }, b: { x: numbe
   return d < (a.size + b.size) * 0.5;
 }
 
-function updateAI(aiFish: Fish[], player: Player, now: number) {
+function updateAI(aiFish: Fish[], now: number) {
   aiFish.forEach((f) => {
-    const dx = player.x - f.x;
-    const dy = player.y - f.y;
-    const d = Math.sqrt(dx * dx + dy * dy) || 1;
-    const wander = Math.sin(now * 0.002 + f.size * 3) * 0.4;
-    f.x += (dx / d + wander) * f.speed;
-    f.y += (dy / d + wander * 0.7) * f.speed * 0.6;
-    f.dir = dx > 0 ? 1 : -1;
-    f.x = Math.max(f.size * 0.7, Math.min(W - f.size * 0.7, f.x));
+    // Swim horizontally in their assigned direction with slight vertical drift
+    const wanderY = Math.sin(now * 0.002 + f.size * 3) * 0.5;
+    f.x += f.dir * f.speed;
+    f.y += wanderY;
+
+    // Clamp vertical
     f.y = Math.max(f.size * 0.5, Math.min(H - f.size * 0.5 - 30, f.y));
+
+    // Wrap around — fish that exits one side reappears on the other
+    if (f.x > W + f.size) {
+      f.x = -f.size;
+      f.y = 30 + Math.random() * (H - 60);
+    } else if (f.x < -f.size) {
+      f.x = W + f.size;
+      f.y = 30 + Math.random() * (H - 60);
+    }
   });
 }
 
@@ -301,7 +308,7 @@ export function initGame(canvas: HTMLCanvasElement) {
   function update() {
     if (state !== "playing") return;
     handleInput();
-    updateAI(aiFish, player, frames);
+    updateAI(aiFish, frames);
     checkCollisions();
     updateBubbles(bubbles);
   }
